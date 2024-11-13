@@ -1,0 +1,246 @@
+Go //Find out if it's installed
+Go version
+package main //must be 'main' if going to be an executable. If you change it to something else then try to build, you get no error + NOTHING :)
+import "fmt" // ********golang.org/pkg**********
+func main() { //an exe must have a function called main
+	fmt.Println("hello wolf!")
+	integer := 23
+	fmt.Printf("%v", integer)
+}
+Go run wolf.go
+Go build wolf.go //main.exe
+./wolf.exe
+var card string = "Ace of Spades" //statically typed!
+card := "Ace of Spades" // := is only for a new variable
+var deckSize int //You can do this outside of func main() !
+func newCard() string {
+	return "Five of Diamonds"
+}
+cards := []string{"Ace of Diamonds", newCard()} //Splice not an array
+cards = append(cards, "Jack of Diamonds")
+for i, card := range cards {
+	fmt.Println(i, card)
+}
+type deck []string //NOTE: the receiver has (d deck) BEFORE the function name!
+func (d deck) print() { //receiver function. Any variable of type 'deck' gets access to the print method
+	for i, card := range d {
+		fmt.Println(i, card)
+	}
+}
+cards := deck{"Ace of Diamonds", newCard()}
+cards.print();
+func newDeck() deck {
+	cards := deck{}
+	cardSuits := []string{"Spades", "Hearts", "Diamonds", "Clubs"}
+	cardValues := []string{"Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"}
+	for _, suit := range cardSuits {
+		for _, value := range cardValues {
+			cards = append(cards, value+" of "+suit)
+		}
+	}
+	return cards
+}
+separateDeck := cards[0:13] // [startIndexIncluding: upToNotIncluding]
+separateDeck := cards[:13]  // Number left out - from beginning
+separateDeck := cards[50:]  // Number missed out - to end
+func deal(d deck, handsize int) (deck, deck) { //Not using a receiver as cards.deal() might make someone think that cards was going to be modified.
+	return d[:handsize], d[handsize:]
+}
+myHand, myLeftOver := deal(cards, handsize) //returns two values!!
+type color string
+func (c color) describe(description string) string {
+	return string(c) + " " + description
+}
+c := color("purple")
+fmt.Println(c.describe("is amazing"))
+fmt.Println([]byte(something))//Convert to byte array then print. C#: byte[] infoArray = Encoding.ASCII.GetBytes(info); Loop through each byte to display.
+func (d deck) toString() string {
+	deskAsString := []string(d) //Convert deck to string array
+	return strings.Join(deskAsString, ",")} //Convert string array to string
+cardsAsByteSlice := []byte(cardsAsString)
+err := os.WriteFile("Chickens", cardsAsByteSlice, 0644)
+if err != nil {
+	log.Fatal(err)}
+bytesFromFile, readError := os.ReadFile("Chickens")
+stringFromBytes := string(bytesFromFile) //Convert byte slice to string
+stringArray := strings.Split(stringFromBytes, ",") //Convert string to string array
+myDeck := deck(stringArray) //Convert string array to deck
+os.Exit(999)
+func (d deck) shuffle() {
+	source := rand.NewSource(time.Now().UnixNano())
+	for i := range d {
+		r := rand.New(source)
+		newPosition := r.Intn(len(d) - 1)
+		d[i], d[newPosition] = d[newPosition], d[i]
+	}
+}
+go mod init cards
+func TestNewDeck(t *testing.T) { //testing file must end _test.go
+	d := newDeck()
+	if len(d) != 52 {
+		t.Errorf("Error: expected 52 cards but got %v", len(d))
+	}
+}
+if i%2 == 0 {
+ fmt.Printf("%v is even\n", i)
+} else {
+ fmt.Printf("%v is odd\n", i)
+}
+type person struct {
+	firstname string
+	lastname  string
+	contactInfo
+}
+type contactInfo struct {
+	email    string
+	houseNum int
+}
+bob := person{
+		firstname: "Gail",
+		lastname:  "Foad",
+		contactInfo: contactInfo {
+			email:    "bob@gmail.com",
+			houseNum: 76,
+		},
+}
+fmt.Printf("%+v", bob) //Print struct's field names
+fmt.Println(bob.firstname, bob.lastname)
+var Romanov person
+Romanov.firstname = "Nicolas"
+func (p person) print() {
+	fmt.Printf("%+v\n", p)
+}
+func (p *person) updateLastName(newLastName string) { //*person - type description -  a pointer of type person
+	(*p).lastname = newLastName                      //*p - * is an operator - we want the value that the pointer is referencing
+}
+fmt.Printf("memory address %p\n", &Romanov)
+fmt.Printf("Type: %T\n", Romanov)
+func updateSlice(s []string) { //Slices are length (current length), capacity and ptr to head. So don't need pointers to work in functions
+	s[0] = "Bonjour"
+}//reference types: slices, maps, channels, pointers, functions
+fmt.Println(*&name) //value types: int, float, string, bool, structs.
+func main() {
+	i := "gail"
+	fmt.Printf("1. main  -- i  %T: &i=%p i=%v\n", i, &i, i)
+	namePointer := &i
+	byVal(namePointer)
+}
+func byVal(q *string) {
+	fmt.Printf("2. byVal -- q %T: &q=%p q=&i=%p  *q=i=%v\n", q, &q, q, *q)
+}
+colours := map[string]string{
+		"purple": "#800080",
+		"green":  "#00FF00",
+}
+var colours map[string]string
+colours := make(map[string]string)
+colours["purple"] = "#800080"
+delete(colours, "purple")
+func printMap(c map[string]string) {
+	for colour, hex := range c {
+		fmt.Println(colour, hex)
+	}
+	c["silver"] = "#C0C0C0"
+}
+for i := 0; i < len(sl); i++ {
+		fmt.Println(sl[i])
+}
+type bot interface { //If you have getGreeting, you are now an honourary member of type 'bot'. //Interfaces are implicit. No linking needed.
+	getGreeting() string
+}
+func doStuff(b bot) { //If you're an honourary member of type bot, you can also call 'doStuff' //Concrete type
+	fmt.Println(b.getGreeting())
+}
+type germanBot struct { //concrete type
+	name     string
+	language string
+}
+func (gb germanBot) getGreeting() string {
+	return "My name is " + gb.name
+}
+func main() {
+	engBot := englishBot{name: "Harry", language: "English"}
+	gerBot := germanBot{name: "Kurt", language: "German"}
+	doStuff(engBot)
+	doStuff(gerBot)
+}
+import (
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+)
+func main() {
+	resp, err := http.Get("http://kitten.net")
+	if err != nil {
+		log.Fatalln(err)
+		os.Exit(1)
+	}
+	defer resp.Body.Close() //Schedules the close method to be called when the function returns.
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Printf(string(body))
+}
+bob := strings.NewReader("Hello Bob") //bob is now a struct 'reader'
+body, error := io.ReadAll(bob)
+if error != nil {
+	log.Fatalln(error)
+	os.Exit(1)
+}
+fmt.Println(string(body))
+resp, err := http.Get("https://jsonplaceholder.typicode.com/posts/2")
+bs := make([]byte, 900)//see Reader.docx
+resp.Body.Read(bs)
+fmt.Println(string(bs))
+io.Copy(os.Stdout, resp.Body)
+func (l logWriter) Write(p []byte) (n int, err error) {
+	fmt.Printf("hello duck!\n\n")
+	fmt.Printf(string(p))
+	return 0, nil
+}
+io.Copy(bobWriter, resp.Body)
+myFile, err := os.Open(os.Args[1])//file to open provided as an argument to the program - go run main.go chickens
+io.Copy(os.Stdout, myFile)
+func main() {
+	links := []string{
+		"http://amazon.com",
+		"http://arsebook.com",
+		"http://google.com",
+		"http://stackoverflow.com",
+		"http://golang.org",
+	}
+	c := make(chan string)
+	for _, link := range links {
+		go checkLink(link, c)
+	}
+	for i := 0; i < len(links); i++ {
+		fmt.Println(<-c) //Receiving messages from a channel is a blocking line of code!
+	}
+}
+func checkLink(l string, c chan string) {
+	resp, err := http.Get(l)
+	if err != nil {
+		fmt.Println(l + " has a problem")
+		c <- "Might be down, I think\n"
+	} else {
+		fmt.Println(l + " " + resp.Status)
+		c <- "Yes, it's up\n"
+	}
+}
+for l := range c {
+		go func(linky string) { //function literal
+			time.Sleep(5 * time.Second)
+			checkLink(linky, c)
+		}(l)
+}
+greeting := "hello wolf"
+myChan := make(chan string)
+go (func(g string, c chan string) {
+	fmt.Println(g)
+	c <- "done"
+})(greeting, myChan)
+fmt.Println(<-myChan)
+go mod init github.com/GailBowen/thesquirrelcannon //debugging
+go env -w GO111MODULE=auto
