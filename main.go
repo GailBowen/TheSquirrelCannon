@@ -58,58 +58,9 @@ func LoadFlashcards(filename string) ([]Flashcard, error) {
 	return flashcards, nil
 }
 
-// Saves flashcards back to the CSV file with updated progress
-// Updates flashcards in a CSV file without clearing other records
+// Saves all flashcards back to the CSV file by clearing the file and writing all records.
 func SaveFlashcards(filename string, flashcards []Flashcard) error {
-	// Step 1: Load existing records from the CSV file
-	file, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	reader := csv.NewReader(file)
-	existingRecords, err := reader.ReadAll()
-	if err != nil {
-		return err
-	}
-
-	// Step 2: Create a map of flashcards for quick lookup by word
-	flashcardMap := make(map[string]Flashcard)
-	for _, card := range flashcards {
-		flashcardMap[card.Word] = card
-	}
-
-	// Step 3: Update existing records with new data from flashcards
-	for i, record := range existingRecords {
-		if len(record) < 4 {
-			continue // Skip malformed lines
-		}
-
-		word := record[0]
-		if updatedCard, exists := flashcardMap[word]; exists {
-			// Update Box and LastReview fields if this card was reviewed
-			existingRecords[i][2] = strconv.Itoa(updatedCard.Box)
-			existingRecords[i][3] = updatedCard.LastReview.Format("2006-01-02T15:04:05")
-			delete(flashcardMap, word) // Remove from map once updated
-		}
-	}
-
-	// Step 4: Append any new flashcards that were not found in the existing records
-	for _, card := range flashcards {
-		if _, exists := flashcardMap[card.Word]; exists {
-			newRecord := []string{
-				card.Word,
-				card.Definition,
-				strconv.Itoa(card.Box),
-				card.LastReview.Format("2006-01-02T15:04:05"),
-			}
-			existingRecords = append(existingRecords, newRecord)
-		}
-	}
-
-	// Step 5: Write all records (updated and unchanged) back to the CSV file
-	file, err = os.Create(filename) // This truncates (empties) the file before writing
+	file, err := os.Create(filename) // This truncates (empties) the file before writing
 	if err != nil {
 		return err
 	}
@@ -118,7 +69,13 @@ func SaveFlashcards(filename string, flashcards []Flashcard) error {
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
 
-	for _, record := range existingRecords {
+	for _, card := range flashcards {
+		record := []string{
+			card.Word,
+			card.Definition,
+			strconv.Itoa(card.Box),
+			card.LastReview.Format("2006-01-02T15:04:05"),
+		}
 		if err := writer.Write(record); err != nil {
 			return err
 		}
@@ -188,35 +145,33 @@ func main() {
 		cards, err := LoadFlashcards(filename)
 		if err != nil {
 			log.Fatalf("Error loading flashcards: %v", err)
+			break
 		}
 
 		fmt.Println("\n--- Reviewing today's cards ---")
 
-		var cardsToReview []Flashcard
+		hasCardsToReview := false
 
-		// Collect cards that need to be reviewed today based on their box and last review date.
+		// Review each card that needs to be reviewed today.
 		for i := range cards {
 			if ShouldReview(cards[i]) {
-				cardsToReview = append(cardsToReview, cards[i])
+				hasCardsToReview = true
+
+				correct := ReviewCard(cards[i])
+				UpdateCard(&cards[i], correct)
 			}
 		}
 
-		if len(cardsToReview) == 0 {
+		if !hasCardsToReview {
 			fmt.Println("No cards to review today.")
 			break
 		}
 
-		for i := range cardsToReview {
-			correct := ReviewCard(cardsToReview[i])
-			UpdateCard(&cardsToReview[i], correct)
-		}
-
 		fmt.Println("Saving progress...")
-		if err := SaveFlashcards(filename, cardsToReview); err != nil {
+		if err := SaveFlashcards(filename, cards); err != nil {
 			log.Fatalf("Error saving progress: %v", err)
 		}
 
 		fmt.Println("All done for today! See you tomorrow.")
-
 	}
 }
