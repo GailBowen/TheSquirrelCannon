@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/csv"
 	"fmt"
 	"log"
@@ -114,8 +115,10 @@ func ShouldReview(card Flashcard) bool {
 func ReviewCard(card Flashcard) bool {
 	fmt.Printf("Definition: %s\n", card.Definition)
 	fmt.Print("Your answer: ")
-	var answer string
-	fmt.Scanln(&answer)
+
+	reader := bufio.NewReader(os.Stdin)
+	answer, _ := reader.ReadString('\n')
+	answer = answer[:len(answer)-1]
 
 	if strings.TrimSpace(strings.ToLower(answer)) == strings.ToLower(card.Word) {
 		fmt.Println("Correct!")
