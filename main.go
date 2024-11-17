@@ -70,7 +70,12 @@ func SaveFlashcards(filename string, flashcards []Flashcard) error {
 	defer writer.Flush()
 
 	for _, card := range flashcards {
-		record := []string{card.Word, card.Definition}
+		record := []string{
+			card.Word,
+			card.Definition,
+			strconv.Itoa(card.Box),
+			card.LastReview.Format("2006-01-02T15:04:05"), // Format LastReview as a string
+		}
 		if err := writer.Write(record); err != nil {
 			return err
 		}
@@ -162,7 +167,7 @@ func main() {
 		}
 
 		fmt.Println("Saving progress...")
-		if err := SaveFlashcards(filename, cards); err != nil {
+		if err := SaveFlashcards(filename, cardsToReview); err != nil {
 			log.Fatalf("Error saving progress: %v", err)
 		}
 
