@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// Flashcard represents a vocabulary word and its definition
+// Flashcard represents a vocabulary word, its definition, its box and the date last reviewed.
 type Flashcard struct {
 	Word       string
 	Definition string
@@ -18,7 +18,7 @@ type Flashcard struct {
 	LastReview time.Time // Last time this card was reviewed
 }
 
-// LoadFlashcards loads flashcards from a CSV file
+// Loads flashcards from a CSV file
 func LoadFlashcards(filename string) ([]Flashcard, error) {
 	file, err := os.Open(filename)
 	if err != nil {
@@ -58,7 +58,7 @@ func LoadFlashcards(filename string) ([]Flashcard, error) {
 	return flashcards, nil
 }
 
-// SaveFlashcards saves flashcards back to the CSV file with updated progress
+// Saves flashcards back to the CSV file with updated progress
 func SaveFlashcards(filename string, flashcards []Flashcard) error {
 	file, err := os.Create(filename)
 	if err != nil {
@@ -78,7 +78,7 @@ func SaveFlashcards(filename string, flashcards []Flashcard) error {
 	return nil
 }
 
-// GetNextReviewInterval returns the number of days until the next review based on the box number
+// Returns the number of days until the next review based on the box number
 func GetNextReviewInterval(box int) int {
 	switch box {
 	case 1:
@@ -96,14 +96,14 @@ func GetNextReviewInterval(box int) int {
 	}
 }
 
-// ShouldReview determines if a card should be reviewed today based on its last review date and box interval
+// Determines if a card should be reviewed today based on its last review date and box interval
 func ShouldReview(card Flashcard) bool {
 	daysSinceLastReview := int(time.Since(card.LastReview).Hours() / 24)
 	nextReviewInterval := GetNextReviewInterval(card.Box)
 	return daysSinceLastReview >= nextReviewInterval
 }
 
-// ReviewCard presents a card's definition and prompts the user for the word.
+// Presents a card's definition and prompts the user for the word.
 // It returns whether they got it correct or not.
 func ReviewCard(card Flashcard) bool {
 	fmt.Printf("Definition: %s\n", card.Definition)
@@ -120,7 +120,7 @@ func ReviewCard(card Flashcard) bool {
 	}
 }
 
-// UpdateCard updates the flashcard's box based on whether it was answered correctly or not.
+// Updates the flashcard's box based on whether it was answered correctly or not.
 func UpdateCard(card *Flashcard, correct bool) {
 	if correct && card.Box < 5 {
 		card.Box++ // Move to next box if correct and not already in Box 5
@@ -167,6 +167,6 @@ func main() {
 		}
 
 		fmt.Println("All done for today! See you tomorrow.")
-		time.Sleep(24 * time.Hour) // Wait until next day for simplicity; replace with real scheduling logic as needed.
+
 	}
 }

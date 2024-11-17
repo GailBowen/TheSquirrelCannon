@@ -244,3 +244,6 @@ go (func(g string, c chan string) {
 fmt.Println(<-myChan)
 go mod init github.com/GailBowen/thesquirrelcannon //debugging
 go env -w GO111MODULE=auto
+if s, err := strconv.Atoi(line[2]); err == nil {
+layout := "2006-01-02T15:04:05"
+if parsedTime, err := time.Parse(layout, line[3]); err == nil {
