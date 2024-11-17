@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -37,15 +38,22 @@ func LoadFlashcards(filename string) ([]Flashcard, error) {
 			continue // skip malformed lines
 		}
 
-		now := time.Now()
+		layout := "2006-01-02T15:04:05"
 
-		card := Flashcard{
-			Word:       line[0],
-			Definition: line[1],
-			Box:        1, // Start in Box 1
-			LastReview: now.AddDate(0, 0, -3),
+		if s, err := strconv.Atoi(line[2]); err == nil {
+
+			if parsedTime, err := time.Parse(layout, line[3]); err == nil {
+
+				card := Flashcard{
+					Word:       line[0],
+					Definition: line[1],
+					Box:        s,
+					LastReview: parsedTime,
+				}
+				flashcards = append(flashcards, card)
+			}
 		}
-		flashcards = append(flashcards, card)
+
 	}
 	return flashcards, nil
 }
