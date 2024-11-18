@@ -103,9 +103,10 @@ func GetNextReviewInterval(box int) int {
 	}
 }
 
-// Determines if a card should be reviewed today based on its last review date and box interval
-func ShouldReview(card Flashcard) bool {
-	daysSinceLastReview := int(time.Since(card.LastReview).Hours() / 24)
+// Determines if a card should be reviewed today based on its last review date and box interval.
+// Takes an additional 'dateToUse' parameter for testing purposes.
+func ShouldReview(card Flashcard, dateToUse time.Time) bool {
+	daysSinceLastReview := int(dateToUse.Sub(card.LastReview).Hours() / 24)
 	nextReviewInterval := GetNextReviewInterval(card.Box)
 	return daysSinceLastReview >= nextReviewInterval
 }
@@ -130,22 +131,56 @@ func ReviewCard(card Flashcard) bool {
 }
 
 // Updates the flashcard's box based on whether it was answered correctly or not.
-func UpdateCard(card *Flashcard, correct bool) {
+// Takes an additional 'dateToUse' parameter for testing purposes.
+func UpdateCard(card *Flashcard, correct bool, dateToUse time.Time) {
 	if correct && card.Box < 5 {
 		card.Box++ // Move to next box if correct and not already in Box 5
 	} else if !correct {
 		card.Box = 1 // Move back to Box 1 if incorrect
 	}
-	card.LastReview = time.Now() // Update last review time to now
+	card.LastReview = dateToUse // Update last review time to 'dateToUse'
 }
 
 func main() {
 	const filename = "New_flashcards.csv"
 
+	mode := os.Getenv("APP_MODE")
+	var dateToUse time.Time
+
+	if mode == "test" {
+		fmt.Println("\nhello tester!")
+
+		fmt.Println("\nEnter the date you want it to be (format: YYYY-MM-DD):")
+
+		reader := bufio.NewReader(os.Stdin)
+
+		testDateStr, _ := reader.ReadString('\n')
+
+		testDateStr = strings.TrimSpace(testDateStr)
+
+		layout := "2006-01-02"
+
+		var err error
+
+		dateToUse, err = time.Parse(layout, testDateStr)
+
+		if err != nil {
+			fmt.Println("Invalid input. Using today's date.")
+			dateToUse = time.Now()
+		} else {
+			fmt.Println("\nUsing test date:", testDateStr)
+		}
+	} else {
+		// Use today's date in normal mode.
+		dateToUse = time.Now()
+	}
+
 	for {
 
 		fmt.Println("Loading flashcards...")
+
 		cards, err := LoadFlashcards(filename)
+
 		if err != nil {
 			log.Fatalf("Error loading flashcards: %v", err)
 			break
@@ -157,11 +192,11 @@ func main() {
 
 		// Review each card that needs to be reviewed today.
 		for i := range cards {
-			if ShouldReview(cards[i]) {
+			if ShouldReview(cards[i], dateToUse) { // Pass 'dateToUse' here.
 				hasCardsToReview = true
 
 				correct := ReviewCard(cards[i])
-				UpdateCard(&cards[i], correct)
+				UpdateCard(&cards[i], correct, dateToUse) // Pass 'dateToUse' here too.
 			}
 		}
 
@@ -171,6 +206,7 @@ func main() {
 		}
 
 		fmt.Println("Saving progress...")
+
 		if err := SaveFlashcards(filename, cards); err != nil {
 			log.Fatalf("Error saving progress: %v", err)
 		}
