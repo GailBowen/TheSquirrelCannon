@@ -39,7 +39,7 @@ func LoadFlashcards(filename string) ([]Flashcard, error) {
 			continue // skip malformed lines
 		}
 
-		layout := "2006-01-02T15:04:05"
+		layout := "2006-01-02"
 
 		if s, err := strconv.Atoi(line[2]); err == nil {
 
@@ -75,7 +75,7 @@ func SaveFlashcards(filename string, flashcards []Flashcard) error {
 			card.Word,
 			card.Definition,
 			strconv.Itoa(card.Box),
-			card.LastReview.Format("2006-01-02T15:04:05"),
+			card.LastReview.Format("2006-01-02"),
 		}
 		if err := writer.Write(record); err != nil {
 			return err
