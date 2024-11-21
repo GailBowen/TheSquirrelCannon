@@ -1,4 +1,11 @@
-User might want to quit without doing the whole set... Still save progress
+User might want to quit without doing the whole set... Still save progress ****
+
 Get terminal to display ↀ
-Copy code to Lines of code
+Copy code to Lines of code. Print.
 Unit tests??
+
+Clear the screen after every answer as can cheat as previous answer might be v similar.
+
+Speed per answer?
+
+randomise the questions

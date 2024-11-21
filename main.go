@@ -142,7 +142,8 @@ func UpdateCard(card *Flashcard, correct bool, dateToUse time.Time) {
 }
 
 func main() {
-	const filename = "New_flashcards.csv"
+	//const filename = "New_flashcards.csv"
+	const filename = "MrGwynneTmr.csv"
 
 	mode := os.Getenv("APP_MODE")
 	var dateToUse time.Time
