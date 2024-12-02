@@ -11,10 +11,10 @@ import (
 	"time"
 )
 
-// Flashcard represents a vocabulary Answer, its Question, its box and the date last reviewed.
+// Flashcard represents a vocabulary question, its answer, its box and the date last reviewed.
 type Flashcard struct {
-	Answer     string
 	Question   string
+	Answer     string
 	Box        int       // Leitner box number (1 to 5)
 	LastReview time.Time // Last time this card was reviewed
 }
@@ -46,8 +46,8 @@ func LoadFlashcards(filename string) ([]Flashcard, error) {
 			if parsedTime, err := time.Parse(layout, line[3]); err == nil {
 
 				card := Flashcard{
-					Answer:     line[0],
-					Question:   line[1],
+					Question:   line[0],
+					Answer:     line[1],
 					Box:        s,
 					LastReview: parsedTime,
 				}
@@ -72,8 +72,8 @@ func SaveFlashcards(filename string, flashcards []Flashcard) error {
 
 	for _, card := range flashcards {
 		record := []string{
-			card.Answer,
 			card.Question,
+			card.Answer,
 			strconv.Itoa(card.Box),
 			card.LastReview.Format("2006-01-02"),
 		}
@@ -111,7 +111,7 @@ func ShouldReview(card Flashcard, dateToUse time.Time) bool {
 	return daysSinceLastReview >= nextReviewInterval
 }
 
-// Presents a card's Question and prompts the user for the Answer.
+// Presents a card's question and prompts the user for the answer.
 // It returns whether they got it correct or not.
 func ReviewCard(card Flashcard) bool {
 	fmt.Printf("Question: %s\n", card.Question)
