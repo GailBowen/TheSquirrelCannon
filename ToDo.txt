@@ -3,6 +3,9 @@ User might want to quit without doing the whole set... Still save progress ****
 Get terminal to display ↀ
 Copy code to Lines of code. Print.
 Unit tests??
+Comments column - e.g. freddo comes from frigidus!
+
+Enter the name + path of the csv file to use.
 
 Clear the screen after every answer as can cheat as previous answer might be v similar.
 

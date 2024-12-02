@@ -11,10 +11,10 @@ import (
 	"time"
 )
 
-// Flashcard represents a vocabulary word, its definition, its box and the date last reviewed.
+// Flashcard represents a vocabulary Answer, its Question, its box and the date last reviewed.
 type Flashcard struct {
-	Word       string
-	Definition string
+	Answer     string
+	Question   string
 	Box        int       // Leitner box number (1 to 5)
 	LastReview time.Time // Last time this card was reviewed
 }
@@ -46,8 +46,8 @@ func LoadFlashcards(filename string) ([]Flashcard, error) {
 			if parsedTime, err := time.Parse(layout, line[3]); err == nil {
 
 				card := Flashcard{
-					Word:       line[0],
-					Definition: line[1],
+					Answer:     line[0],
+					Question:   line[1],
 					Box:        s,
 					LastReview: parsedTime,
 				}
@@ -72,8 +72,8 @@ func SaveFlashcards(filename string, flashcards []Flashcard) error {
 
 	for _, card := range flashcards {
 		record := []string{
-			card.Word,
-			card.Definition,
+			card.Answer,
+			card.Question,
 			strconv.Itoa(card.Box),
 			card.LastReview.Format("2006-01-02"),
 		}
@@ -111,21 +111,21 @@ func ShouldReview(card Flashcard, dateToUse time.Time) bool {
 	return daysSinceLastReview >= nextReviewInterval
 }
 
-// Presents a card's definition and prompts the user for the word.
+// Presents a card's Question and prompts the user for the Answer.
 // It returns whether they got it correct or not.
 func ReviewCard(card Flashcard) bool {
-	fmt.Printf("Definition: %s\n", card.Definition)
+	fmt.Printf("Question: %s\n", card.Question)
 	fmt.Print("Your answer: ")
 
 	reader := bufio.NewReader(os.Stdin)
 	answer, _ := reader.ReadString('\n')
 	answer = answer[:len(answer)-1]
 
-	if strings.TrimSpace(strings.ToLower(answer)) == strings.ToLower(card.Word) {
+	if strings.TrimSpace(strings.ToLower(answer)) == strings.ToLower(card.Answer) {
 		fmt.Println("Correct!")
 		return true
 	} else {
-		fmt.Printf("Incorrect! The correct word was: %s\n", card.Word)
+		fmt.Printf("Incorrect! The correct answer was: %s\n", card.Answer)
 		return false
 	}
 }
@@ -143,7 +143,8 @@ func UpdateCard(card *Flashcard, correct bool, dateToUse time.Time) {
 
 func main() {
 	//const filename = "New_flashcards.csv"
-	const filename = "C:\\Users\\gailb\\Documents\\Code\\TheSquirrelCannon\\Cards\\Languages\\Human\\Latin\\MrGwynneTmr.csv"
+	//const filename = "C:\\Users\\gailb\\Documents\\Code\\TheSquirrelCannon\\Cards\\Languages\\Human\\Latin\\MrGwynneTmr.csv"
+	const filename = "C:\\Users\\gailb\\Documents\\Code\\TheSquirrelCannon\\Cards\\Languages\\Human\\Italian\\Italian.csv"
 
 	mode := os.Getenv("APP_MODE")
 	var dateToUse time.Time
