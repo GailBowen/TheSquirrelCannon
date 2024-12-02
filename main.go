@@ -112,21 +112,26 @@ func ShouldReview(card Flashcard, dateToUse time.Time) bool {
 }
 
 // Presents a card's question and prompts the user for the answer.
-// It returns whether they got it correct or not.
-func ReviewCard(card Flashcard) bool {
+// First bool return: Is it correct?
+// Second bool return: The user typed STOP
+func ReviewCard(card Flashcard) (bool, bool) {
 	fmt.Printf("Question: %s\n", card.Question)
-	fmt.Print("Your answer: ")
+	fmt.Print("Your answer (type STOP to exit): ")
 
 	reader := bufio.NewReader(os.Stdin)
 	answer, _ := reader.ReadString('\n')
 	answer = answer[:len(answer)-1]
 
+	if strings.TrimSpace(strings.ToUpper(answer)) == "STOP" {
+		return false, true // false for incorrect, true for STOP!
+	}
+
 	if strings.TrimSpace(strings.ToLower(answer)) == strings.ToLower(card.Answer) {
 		fmt.Println("Correct!")
-		return true
+		return true, false
 	} else {
 		fmt.Printf("Incorrect! The correct answer was: %s\n", card.Answer)
-		return false
+		return false, false
 	}
 }
 
@@ -194,11 +199,16 @@ func main() {
 
 		// Review each card that needs to be reviewed today.
 		for i := range cards {
-			if ShouldReview(cards[i], dateToUse) { // Pass 'dateToUse' here.
+			if ShouldReview(cards[i], dateToUse) {
 				hasCardsToReview = true
 
-				correct := ReviewCard(cards[i])
-				UpdateCard(&cards[i], correct, dateToUse) // Pass 'dateToUse' here too.
+				correct, stopNow := ReviewCard(cards[i])
+
+				if stopNow {
+					break
+				}
+
+				UpdateCard(&cards[i], correct, dateToUse)
 			}
 		}
 
