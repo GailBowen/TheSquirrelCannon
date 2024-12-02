@@ -1,4 +1,6 @@
-User might want to quit without doing the whole set... Still save progress ****
+<next>
+If you press STOP to quit out of a big group, it save the progress but does not end the program.
+</next>
 
 Get terminal to display ↀ
 Copy code to Lines of code. Print.
