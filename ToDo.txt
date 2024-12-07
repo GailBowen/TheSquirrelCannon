@@ -1,5 +1,6 @@
 <next>
-If you press STOP to quit out of a big group, it save the progress but does not end the program.
+Shuffle them
+How many got right today?
 </next>
 
 Get terminal to display ↀ
